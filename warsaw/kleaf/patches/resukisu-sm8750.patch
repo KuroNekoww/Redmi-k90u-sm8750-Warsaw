@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Warsaw Builder <warsaw@example.com>
+Date: Thu, 7 Aug 2026 00:00:00 +0000
+Subject: [PATCH] ReSukiSU: adapt seccomp release for Android GKI 6.6
+
+The Android 6.6 common kernel backported the seccomp filter release
+contract that requires setting PF_EXITING before releasing a task's
+seccomp filter. Upstream 6.6 did not carry this change, so ReSukiSU's
+version guard needs a build-time override for this device.
+
+This patch is applied at build/runtime; the ReSukiSU submodule itself
+remains unmodified in the git index.
+
+---
+ kernel/Kbuild               | 1 +
+ kernel/policy/app_profile.c | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/Kbuild b/kernel/Kbuild
+index 4ac11d61..61161add 100644
+--- a/kernel/Kbuild
++++ b/kernel/Kbuild
+@@ -43,6 +43,7 @@ ccflags-y += -Wno-implicit-function-declaration -Wno-strict-prototypes
+ ccflags-y += $(call cc-disable-warning, int-conversion)
+ ccflags-y += -Wno-declaration-after-statement -Wno-unused-function -Wno-unused-variable -Wno-missing-braces
+ ccflags-y += -Wno-int-to-pointer-cast -Wno-declaration-after-statement
++ccflags-y += -DKSU_SECCOMP_RELEASE_REQUIRES_PF_EXITING=1
+
+ ccflags-y += -I$(srctree)/security/selinux -I$(srctree)/security/selinux/include
+ ccflags-y += -I$(srctree)/$(src) -I$(srctree)/$(src)/include
+
+diff --git a/kernel/policy/app_profile.c b/kernel/policy/app_profile.c
+index 6f424762..13e2c2b6 100644
+--- a/kernel/policy/app_profile.c
++++ b/kernel/policy/app_profile.c
+@@ -123,7 +123,7 @@ int ksu_seccomp_release(struct task_struct *fake, struct task_struct *current)
+     spin_unlock_irq(&current->sighand->siglock);
+
+ #if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) || defined(KSU_OPTIONAL_SECCOMP_FILTER_RELEASE))
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0)
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 11, 0) || defined(KSU_SECCOMP_RELEASE_REQUIRES_PF_EXITING)
+     // https://github.com/torvalds/linux/commit/bfafe5efa9754ebc991750da0bcca2a6694f3ed3#diff-45eb79a57536d8eccfc1436932f093eb5c0b60d9361c39edb46581ad313e8987R576-R577
+     fake->flags |= PF_EXITING;
+ #elif LINUX_VERSION_CODE >= KERNEL_VERSION(5, 11, 0)

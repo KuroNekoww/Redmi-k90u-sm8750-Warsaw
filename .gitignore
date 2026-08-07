@@ -173,3 +173,12 @@ sphinx_*/
 # Warsaw release artifacts
 /warsaw/bore-like/*.zip
 /warsaw-gki-workspace-lock.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Keep Warsaw ReSukiSU runtime patches tracked
+!warsaw/kleaf/patches/
+!warsaw/kleaf/patches/**

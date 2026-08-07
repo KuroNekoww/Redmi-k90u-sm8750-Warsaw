@@ -1,35 +1,27 @@
-# Warsaw J-x-Z BORE-like KernelSU GKI
+# Warsaw J-x-Z ReSukiSU GKI
 
 This target derives from the runtime-validated exact Warsaw GKI baseline while
 keeping the baseline workspace and source checkout untouched.
 
 The first enhancement stage contains only two intentional changes:
 
-1. `CONFIG_LOCALVERSION="-4k-J-x-Z-BORE-like"` for an unmistakable runtime
-   identity.
-2. KernelSU v3.2.5 built into the GKI, with the Android 6.6 backported seccomp
-   release contract handled by `PF_EXITING` instead of the incompatible
-   upstream-version heuristic.
+1. `CONFIG_LOCALVERSION="-4k-KuroNekoww"` for an unmistakable runtime identity.
+2. ReSukiSU built into the GKI, with the Android 6.6 backported seccomp
+   release contract handled by `PF_EXITING` via a runtime patch instead of the
+   incompatible upstream-version heuristic.
 
-The public branch already contains the hash-locked KernelSU integration.
-`verify_source_state.py` checks its base ancestry, integration diff, KernelSU
-tree, public certificate and pinned SCM metadata before every build.
+The public branch uses the ReSukiSU git submodule at `common/KernelSU` and
+applies `warsaw/kleaf/patches/resukisu-sm8750.patch` at build time.
 
-BORE, container namespaces, optional filesystems, wireless stacks and USB gadget
-expansions are intentionally excluded from the public KernelSU target.
-
-`jxz-bore-like/` provides the compatible scheduler enhancement. It keeps EAS and
-WALT intact and uses reversible Android uclamp profiles instead of changing
-`struct sched_entity`; therefore it does not perturb the validated stock-module
-ABI. It is explicitly BORE-like rather than the upstream BORE implementation and
-is disabled by default.
+Container namespaces, optional filesystems, wireless stacks and USB gadget
+expansions are intentionally excluded from the public ReSukiSU target.
 
 Any future config expansion must compare every original module `__versions`
 entry with the candidate `vmlinux.symvers`. A successful Kleaf/KMI build alone
 is not sufficient for a device test.
 
-The first device test must not combine built-in KernelSU with the existing
-KernelSU LKM in `init_boot`. Prepare and verify an LKM-free `init_boot` rollback
+The first device test must not combine built-in ReSukiSU with the existing
+KernelSU/ReSukiSU LKM in `init_boot`. Prepare and verify an LKM-free `init_boot` rollback
 path before authorizing any temporary boot or partition write.
 
 `package_test_boot.py` repacks the locked stock Android boot V4 profile with a

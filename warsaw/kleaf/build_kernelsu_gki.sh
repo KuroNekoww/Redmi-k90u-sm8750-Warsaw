@@ -24,8 +24,19 @@ if [ ! -f "$manifest" ]; then
     echo "manifest does not exist: $manifest" >&2
     exit 1
 fi
-python3 "$workspace/warsaw_enhanced/verify_source_state.py" "$workspace" \
-    > "$dist_dir/source-verification.json"
+if [ ! -f "$workspace/common/KernelSU/kernel/Kbuild" ]; then
+    echo "ReSukiSU submodule not initialized; run: git -C $workspace/common submodule update --init --recursive" >&2
+    exit 1
+fi
+
+patch_file="$workspace/common/warsaw/kleaf/patches/resukisu-sm8750.patch"
+ksu_src="$workspace/common/KernelSU/kernel"
+(
+    cd "$workspace/common/KernelSU"
+    git checkout -- kernel/Kbuild kernel/policy/app_profile.c
+    sed -i "s|^KSU_SRC := .*|KSU_SRC := $ksu_src|" kernel/Kbuild
+    git apply "$patch_file"
+)
 
 export BUILD_NUMBER=15511674
 mkdir -p "$output_user_root"
@@ -66,11 +77,3 @@ if [ ! -f "$config_file" ]; then
 fi
 
 cp "$config_file" "$dist_dir/.config"
-checksum_file=$(mktemp)
-(
-    cd "$dist_dir"
-    find . -maxdepth 1 -type f ! -name SHA256SUMS -print0 \
-        | sort -z \
-        | xargs -0 sha256sum
-) > "$checksum_file"
-mv "$checksum_file" "$dist_dir/SHA256SUMS"

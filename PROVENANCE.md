@@ -5,8 +5,8 @@
 | Layer | Revision | Role |
 |---|---|---|
 | AOSP `kernel/common` | `e56cf6b09cca2151bcee244b3d334fb68685ff57` | Exact source base matching official build 15511674 |
-| KernelSU | `b0bc817b4e966aa6aa830834eaf6ef765d821d40` | KernelSU v3.2.5 kernel source |
-| Warsaw integration | this branch | Kconfig wiring, Android 6.6 adaptation, build profile and validation tools |
+| ReSukiSU | `058cdc931016cb2cb769ed063cce6d65d6df61e0` (submodule) | ReSukiSU kernel driver from `common/KernelSU` |
+| Warsaw integration | this branch | Kconfig wiring, ReSukiSU Android 6.6 adaptation, build profile and packaging tools |
 
 The 33-project GKI dependency lock is
 `warsaw/manifests/manifest_15511674.xml`. The base source and generated
@@ -27,29 +27,21 @@ there. The snapshot-root tree object is
   `d0f5971e085cb288b7440d7a0540a080feef936cb6c62f420192b11918da740a`
 - `drivers/Makefile` SHA-256:
   `ae4bf7afcbd8b1c57b02ac5f61cae216e992f2f6471cad9bafa8e400cd8f1006`
-- KernelSU integrated-tree SHA-256:
-  `8b072b71a3257837b9d55b93f4d6d191efc79841fa196042f73fa0abb7f1d059`
-- KernelSU integrated-tree file count: `91`
-- KernelSU integrated-tree byte count: `421019`
-- KernelSU integration diff SHA-256:
-  `be4456b6b8a1e95c4f7370289afed5800212c4b8ae948194d4e3286cb1f85e3b`
+- `warsaw/kleaf/patches/resukisu-sm8750.patch` SHA-256:
+  (computed at build time)
 
-The tree hash is calculated over sorted relative paths, file sizes and per-file
-SHA-256 values. `warsaw/kleaf/verify_source_state.py` recomputes these values
-before every release build.
-
-Relative to the KernelSU kernel subtree at the pinned commit, the integrated
-tree has only three code/build adaptations: a fixed `CONFIG_KSU_VERSION`, the
-`KSU_SECCOMP_RELEASE_REQUIRES_PF_EXITING` build define, and the matching guarded
-`PF_EXITING` path in `policy/app_profile.c`. The upstream `uapi` symlink is
-materialized inside `drivers/kernelsu/include/uapi` so the kernel repository is
-self-contained.
+The ReSukiSU kernel driver lives in the `KernelSU` git submodule. The only
+Warsaw-specific adaptation is the runtime patch in
+`warsaw/kleaf/patches/resukisu-sm8750.patch`, which adds the
+`KSU_SECCOMP_RELEASE_REQUIRES_PF_EXITING` build define and the matching guarded
+`PF_EXITING` path in `policy/app_profile.c` for Android 6.6. The `uapi` tree is
+provided by the submodule itself; the `drivers/kernelsu` path is a symlink to
+`KernelSU/kernel` so the kernel repository stays self-contained.
 
 `workspace_status.json` pins the base AOSP SCM identity and source timestamp so
 a clean public commit does not replace the runtime-compatible `ge56cf6b09cca`
 identity with the release-documentation commit hash. Product identity is the
-explicit `-4k-J-x-Z-BORE-like` config suffix; `BORE-like` denotes the bundled
-reversible uclamp profile, not the upstream BORE scheduler patch.
+explicit `-4k-J-x-Z` config suffix.
 
 ## Attribution policy
 

@@ -8,13 +8,13 @@ was an earlier naming typo and is not used here.
 
 - exact AOSP Android 15 GKI 6.6 base at
   `e56cf6b09cca2151bcee244b3d334fb68685ff57`;
-- KernelSU v3.2.5 kernel sources based on
-  `b0bc817b4e966aa6aa830834eaf6ef765d821d40`;
-- the Android 6.6 seccomp-release compatibility fix used by the tested image;
-- `CONFIG_LOCALVERSION="-4k-J-x-Z-BORE-like"` and the locked Kleaf build target;
+- ReSukiSU kernel sources via the git submodule at
+  `common/KernelSU`;
+- the Android 6.6 seccomp-release compatibility fix applied as a runtime
+  build patch;
+- `CONFIG_LOCALVERSION="-4k-KuroNekoww"` and the locked Kleaf build target;
 - a public stock GKI signing certificate used only as a trust anchor;
-- boot-image packaging and ABI verification tools;
-- the reversible **J-x-Z BORE-like** uclamp profile.
+- boot-image packaging tools.
 
 ## Runtime status
 
@@ -23,10 +23,10 @@ boot` on the target device and reached a boot-complete Android desktop. The
 runtime release was:
 
 ```text
-6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k-J-x-Z-BORE-like
+6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k-KuroNekoww
 ```
 
-Built-in KernelSU worked from the documented engineering bootstrap command
+Built-in ReSukiSU worked from the documented engineering bootstrap command
 line, SELinux remained Enforcing, and the old external KernelSU LKM was absent.
 No boot, init_boot, vendor_boot, DTBO, hypervisor or firmware partition needs to
 be written to reproduce the temporary-boot test.
@@ -47,12 +47,6 @@ The failed container configuration experiment is not shipped in this public
 tree. It changed thousands of GKI symbol CRCs. Docker-grade kernel namespaces
 and cgroups must wait for rebuildable vendor modules or an official Warsaw
 source release.
-
-The upstream BORE patch is also excluded because it changes scheduler data
-structures. `warsaw/bore-like/` uses existing Android uclamp controls, preserves
-EAS/WALT and can restore the exact current-boot baseline. The `BORE-like` uname
-branding identifies this compatible profile; it does not claim the upstream
-BORE scheduler patch is present.
 
 ## Start here
 

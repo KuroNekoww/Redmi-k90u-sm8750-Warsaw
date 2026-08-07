@@ -15,7 +15,7 @@ package artifacts but is not a supported Kleaf build host.
 
 ```sh
 mkdir warsaw-gki
-git clone https://github.com/J-x-Z/Redmi-k90u-sm8750-Warsaw.git \
+git clone --recurse-submodules https://github.com/J-x-Z/Redmi-k90u-sm8750-Warsaw.git \
   warsaw-gki/common
 cd warsaw-gki
 python3 common/warsaw/sync_workspace.py . --execute
@@ -35,16 +35,14 @@ common/warsaw/kleaf/build_kernelsu_gki.sh \
   "$PWD/common/warsaw/manifests/manifest_15511674.xml"
 ```
 
-The build wrapper verifies the source lock first, forces the official build
-number `15511674`, uses bounded host resources and writes SHA-256 checksums into
-the new output directory.
+The build wrapper forces the official build number `15511674`, uses bounded
+host resources and copies the generated `.config` into the output directory.
 
 Expected configuration identity:
 
 ```text
-CONFIG_LOCALVERSION="-4k-J-x-Z-BORE-like"
+CONFIG_LOCALVERSION="-4k-KuroNekoww"
 CONFIG_KSU=y
-CONFIG_KSU_VERSION=32525
 ```
 
 ## Safety gates

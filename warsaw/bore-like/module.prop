@@ -1,6 +1,0 @@
-id=jxz_bore_like
-name=J-x-Z BORE-like Scheduler Profile
-version=0.1.0
-versionCode=100
-author=J-x-Z
-description=ABI-preserving EAS/WALT companion using reversible uclamp profiles; not the upstream BORE scheduler patch.
