@@ -4,7 +4,7 @@
 
 | Layer | Revision | Role |
 |---|---|---|
-| AOSP `kernel/common` | `e56cf6b09cca2151bcee244b3d334fb68685ff57` | Exact source base matching official build 15511674 |
+| AOSP `kernel/common` | `2c4ce99fdde624f85ae4f01ef5888c3494691210` | Merged `android15-6.6-lts` branch (Linux 6.6.142) |
 | ReSukiSU | `058cdc931016cb2cb769ed063cce6d65d6df61e0` (submodule) | ReSukiSU kernel driver from `common/KernelSU` |
 | Warsaw integration | this branch | Kconfig wiring, ReSukiSU Android 6.6 adaptation, build profile and packaging tools |
 
@@ -13,22 +13,11 @@ The 33-project GKI dependency lock is
 `vmlinux.symvers` were independently matched to the official Warsaw runtime
 evidence before KernelSU was added.
 
-The public branch starts with a source-snapshot root whose tree is byte-for-byte
-the tree of AOSP commit `e56cf6b09cca2151bcee244b3d334fb68685ff57`. The exact
-local checkout used for reconstruction was intentionally shallow and therefore
-could not publish missing parent commits. Full pre-snapshot history remains at
-`https://android.googlesource.com/kernel/common`; the `upstream` Git remote points
-there. The snapshot-root tree object is
-`c701b2cb3998ed7536f97ae358ba8fcf6c75f1f7`.
+The Warsaw tree starts from the AOSP `android15-6.6-lts` branch (Linux 6.6.142)
+and adds the ReSukiSU submodule and Warsaw-specific build tooling. Full AOSP
+history is available upstream at `https://android.googlesource.com/kernel/common`.
 
 ## Locked integration
-
-- `drivers/Kconfig` SHA-256:
-  `d0f5971e085cb288b7440d7a0540a080feef936cb6c62f420192b11918da740a`
-- `drivers/Makefile` SHA-256:
-  `ae4bf7afcbd8b1c57b02ac5f61cae216e992f2f6471cad9bafa8e400cd8f1006`
-- `warsaw/kleaf/patches/resukisu-sm8750.patch` SHA-256:
-  (computed at build time)
 
 The ReSukiSU kernel driver lives in the `KernelSU` git submodule. The only
 Warsaw-specific adaptation is the runtime patch in
@@ -39,9 +28,9 @@ provided by the submodule itself; the `drivers/kernelsu` path is a symlink to
 `KernelSU/kernel` so the kernel repository stays self-contained.
 
 `workspace_status.json` pins the base AOSP SCM identity and source timestamp so
-a clean public commit does not replace the runtime-compatible `ge56cf6b09cca`
+a clean public commit does not replace the runtime-compatible `g2c4ce99fdde6`
 identity with the release-documentation commit hash. Product identity is the
-explicit `-4k-J-x-Z` config suffix.
+explicit `-4k-KuroNekoww` config suffix.
 
 ## Attribution policy
 

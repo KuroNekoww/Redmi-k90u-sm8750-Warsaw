@@ -1,7 +1,7 @@
 # Warsaw J-x-Z ReSukiSU GKI
 
-This target derives from the runtime-validated exact Warsaw GKI baseline while
-keeping the baseline workspace and source checkout untouched.
+This target derives from the AOSP `android15-6.6-lts` baseline (Linux 6.6.142) while
+keeping the workspace and source checkout self-contained.
 
 The first enhancement stage contains only two intentional changes:
 

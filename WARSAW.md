@@ -6,8 +6,8 @@ was an earlier naming typo and is not used here.
 
 ## What is included
 
-- exact AOSP Android 15 GKI 6.6 base at
-  `e56cf6b09cca2151bcee244b3d334fb68685ff57`;
+- AOSP Android 15 GKI 6.6 LTS branch merged at
+  `2c4ce99fdde624f85ae4f01ef5888c3494691210`;
 - ReSukiSU kernel sources via the git submodule at
   `common/KernelSU`;
 - the Android 6.6 seccomp-release compatibility fix applied as a runtime
@@ -23,7 +23,7 @@ boot` on the target device and reached a boot-complete Android desktop. The
 runtime release was:
 
 ```text
-6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k-KuroNekoww
+6.6.142-android15-8-g2c4ce99fdde6-ab15511674-4k-KuroNekoww
 ```
 
 Built-in ReSukiSU worked from the documented engineering bootstrap command

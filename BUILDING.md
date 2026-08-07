@@ -15,7 +15,7 @@ package artifacts but is not a supported Kleaf build host.
 
 ```sh
 mkdir warsaw-gki
-git clone --recurse-submodules https://github.com/J-x-Z/Redmi-k90u-sm8750-Warsaw.git \
+git clone --recurse-submodules https://github.com/KuroNekoww/Redmi-k90u-sm8750-Warsaw.git \
   warsaw-gki/common
 cd warsaw-gki
 python3 common/warsaw/sync_workspace.py . --execute

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repository is
 
-Android 15 GKI 6.6 kernel (Linux 6.6.118) for the Xiaomi Redmi K90 Ultra (`warsaw`) engineering device with SM8750 SoC. It is a hybrid kernel source: the exact AOSP `kernel/common` tree at commit `e56cf6b09cca` plus ReSukiSU built-in and Warsaw-specific build tooling. The branch `warsaw-android15-6.6` is the main/only branch.
+Android 15 GKI 6.6 kernel (Linux 6.6.142) for the Xiaomi Redmi K90 Ultra (`warsaw`) engineering device with SM8750 SoC. It is a hybrid kernel source: the AOSP `kernel/common` `android15-6.6-lts` branch at commit `2c4ce99fdde6` plus ReSukiSU built-in and Warsaw-specific build tooling. The branch `warsaw-android15-6.6` is the main/only branch.
 
 **Important constraint**: This is not a full OEM drop. Stock DTB, DTBO, vendor modules, and firmware are authoritative and NOT replaced by this tree. Never modify scheduler data structures or GKI symbol CRCs — it would break the stock-module ABI.
 
@@ -50,7 +50,7 @@ This kernel uses **Kleaf**, Android's Bazel-based kernel build system. The build
 **Full workspace setup + build:**
 ```sh
 mkdir warsaw-gki && cd warsaw-gki
-git clone --recurse-submodules <this-repo> common
+git clone --recurse-submodules https://github.com/KuroNekoww/Redmi-k90u-sm8750-Warsaw.git common
 python3 common/warsaw/sync_workspace.py . --execute
 common/warsaw/kleaf/build_kernelsu_gki.sh "$PWD" "$PWD/out-warsaw-jxz" "$PWD/common/warsaw/manifests/manifest_15511674.xml"
 ```
@@ -115,7 +115,7 @@ Configuration is layered through Kconfig fragments in `warsaw/kleaf/`:
 - `jxz-toolbox.fragment` — enables additional modules (btusb, vxlan, ntfs3, squashfs, netlink_diag, etc.)
 - `jxz-toolbox-lab.fragment` — enables lab-oriented modules (nbd, bonding, usbip, isofs, udf, pktgen)
 
-Expected runtime version string: `6.6.118-android15-8-ge56cf6b09cca-ab15511674-4k-KuroNekoww`
+Expected runtime version string: `6.6.142-android15-8-g2c4ce99fdde6-ab15511674-4k-KuroNekoww`
 
 ## ReSukiSU notes
 
