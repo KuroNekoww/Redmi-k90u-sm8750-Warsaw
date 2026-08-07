@@ -3482,6 +3482,8 @@ retry_find:
 		goto page_not_uptodate;
 	}
 
+	trace_android_vh_filemap_fault_post_folio_locked(inode, folio, index);
+
 	/*
 	 * We've made it this far and we had to drop our mmap_lock, now is the
 	 * time to return to the upper layer and have it re-find the vma and
@@ -3697,6 +3699,7 @@ static vm_fault_t filemap_map_order0_folio(struct vm_fault *vmf,
 
 	set_pte_range(vmf, folio, page, 1, addr);
 	folio_ref_inc(folio);
+	trace_android_vh_map_order0_folio(vmf->vma->vm_file, vmf->pgoff, folio, ret);
 
 	return ret;
 }
@@ -3717,15 +3720,20 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
 	pgoff_t orig_start_pgoff = start_pgoff;
 	bool can_map_large;
 
+	/*
+	 * Recalculate end_pgoff based on file_end before calling
+	 * next_uptodate_folio() to avoid races with concurrent
+	 * truncation.
+	 */
+	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
+	end_pgoff = min(end_pgoff, file_end);
+
 	rcu_read_lock();
 	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
 	if (!folio)
 		goto out;
 	first_pgoff = xas.xa_index;
 	orig_start_pgoff = xas.xa_index;
-
-	file_end = DIV_ROUND_UP(i_size_read(mapping->host), PAGE_SIZE) - 1;
-	end_pgoff = min(end_pgoff, file_end);
 
 	/*
 	 * Do not allow to map with PTEs beyond i_size and with PMD

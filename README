@@ -1,14 +1,3 @@
-Warsaw / Redmi K90 Ultra SM8750 kernel
-======================================
-
-This branch is the runtime-validated J-x-Z Android 15 GKI source for the
-Xiaomi Warsaw engineering device. It combines the exact AOSP GKI base with a
-tracked KernelSU integration and keeps the stock Warsaw DTB, DTBO, vendor
-modules and firmware as explicit binary boundaries.
-
-Read ``WARSAW.md`` before building or booting. This repository does not claim
-to be a complete Xiaomi OEM source release.
-
 Linux kernel
 ============
 
