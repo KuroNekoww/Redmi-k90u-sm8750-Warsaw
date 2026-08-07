@@ -84,3 +84,16 @@ fi
 
 cp "$config_file" "$dist_dir/.config"
 printf '%s\n' "$kernel_target" > "$dist_dir/build-target.txt"
+
+if [ -n "${WARSAW_OFFICIAL_SYMVERS:-}" ] && [ -n "${WARSAW_STOCK_MODULE_MANIFEST:-}" ]; then
+    if [ -f "$WARSAW_OFFICIAL_SYMVERS" ] && [ -f "$WARSAW_STOCK_MODULE_MANIFEST" ]; then
+        python3 "$workspace/common/warsaw/kleaf/verify_stock_module_abi.py" \
+            --official-symvers="$WARSAW_OFFICIAL_SYMVERS" \
+            --candidate-symvers="$dist_dir/vmlinux.symvers" \
+            --manifest="$WARSAW_STOCK_MODULE_MANIFEST" \
+            --result="$dist_dir/stock-abi-check.json" \
+            --mismatches="$dist_dir/stock-abi-mismatches.csv"
+    else
+        echo "WARSAW_OFFICIAL_SYMVERS or WARSAW_STOCK_MODULE_MANIFEST missing; skipping stock module ABI check" >&2
+    fi
+fi
