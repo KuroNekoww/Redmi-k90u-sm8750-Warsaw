@@ -78,15 +78,8 @@ fi
 
 cp "$config_file" "$dist_dir/.config"
 
-if [ -n "${WARSAW_OFFICIAL_SYMVERS:-}" ] && [ -n "${WARSAW_STOCK_MODULE_MANIFEST:-}" ]; then
-    if [ -f "$WARSAW_OFFICIAL_SYMVERS" ] && [ -f "$WARSAW_STOCK_MODULE_MANIFEST" ]; then
-        python3 "$workspace/common/warsaw/kleaf/verify_stock_module_abi.py" \
-            --official-symvers="$WARSAW_OFFICIAL_SYMVERS" \
-            --candidate-symvers="$dist_dir/vmlinux.symvers" \
-            --manifest="$WARSAW_STOCK_MODULE_MANIFEST" \
-            --result="$dist_dir/stock-abi-check.json" \
-            --mismatches="$dist_dir/stock-abi-mismatches.csv"
-    else
-        echo "WARSAW_OFFICIAL_SYMVERS or WARSAW_STOCK_MODULE_MANIFEST missing; skipping stock module ABI check" >&2
-    fi
-fi
+# The stock-module ABI check is not part of this build. Kleaf's KMI check
+# (kmi_symbol_list_strict_mode) has already run, but it only compares against
+# the official GKI symbol baseline -- it does not prove that this device's
+# stock vendor modules still load. Run verify_stock_module_abi.py by hand
+# before any device test; see warsaw/kleaf/README.md.

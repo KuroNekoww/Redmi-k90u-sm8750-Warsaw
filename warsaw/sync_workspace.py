@@ -76,32 +76,18 @@ def parse_manifest(mirror_prefix: str) -> list[dict[str, object]]:
 
 def ensure_common(workspace: Path) -> None:
     target = workspace / "common"
-    if target.exists() or target.is_symlink():
-        if target.resolve() != COMMON:
-            raise SystemExit(f"workspace common points elsewhere: {target}")
-    else:
-        target.symlink_to(COMMON, target_is_directory=True)
+    if not (target.exists() or target.is_symlink()):
+        raise SystemExit(
+            f"workspace has no common checkout: {target}\n"
+            f"clone it first: git clone --recurse-submodules <url> {target}"
+        )
+    if target.resolve() != COMMON:
+        raise SystemExit(f"workspace common points elsewhere: {target}")
     status = run(
         "git", "status", "--porcelain=v1", "--untracked-files=all", cwd=COMMON
     ).stdout
     if status:
         raise SystemExit("refusing a dirty Warsaw common repository")
-
-
-def ensure_kernelsu_symlink(common_dir: Path) -> None:
-    """Ensure drivers/kernelsu is a symlink to the ReSukiSU submodule.
-
-    The ReSukiSU submodule is expected to be populated during the initial
-    ``git clone --recurse-submodules``; this helper only recreates the symlink
-    if it is missing or points elsewhere.
-    """
-    symlink = common_dir / "drivers" / "kernelsu"
-    target = Path("../KernelSU/kernel")
-    if symlink.is_symlink() and Path(os.readlink(symlink)) == target:
-        return
-    if symlink.exists():
-        raise SystemExit(f"drivers/kernelsu is not the expected symlink: {symlink}")
-    symlink.symlink_to(target, target_is_directory=True)
 
 
 def sync_project(workspace: Path, project: dict[str, object]) -> None:
@@ -212,7 +198,6 @@ def main() -> None:
 
     workspace.mkdir(parents=True, exist_ok=True)
     ensure_common(workspace)
-    ensure_kernelsu_symlink(COMMON)
     for project in projects:
         if project["path"] == "common":
             continue

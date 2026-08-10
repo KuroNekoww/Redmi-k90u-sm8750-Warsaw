@@ -20,6 +20,39 @@ Any future config expansion must compare every original module `__versions`
 entry with the candidate `vmlinux.symvers`. A successful Kleaf/KMI build alone
 is not sufficient for a device test.
 
+## Stock module ABI check
+
+The build scripts do not run this check. Kleaf's own KMI check
+(`kmi_symbol_list_strict_mode`, `trim_nonlisted_kmi`) runs on every build and
+drops `kmi_symbol_list_strict_mode_checked` into the dist dir, but it only
+compares against the official GKI symbol baseline in `common/android/`. It does
+not prove that this device's stock vendor modules still load.
+
+`verify_stock_module_abi.py` does prove that, by reading each stock module's
+`__versions` section and comparing every CRC against the candidate
+`vmlinux.symvers`. Run it by hand before any device test, especially for the
+`toolbox` and `toolbox_lab` targets:
+
+```sh
+python3 warsaw/kleaf/verify_stock_module_abi.py \
+    --official-symvers=<official GKI vmlinux.symvers> \
+    --candidate-symvers=<dist_dir>/vmlinux.symvers \
+    --manifest=<stock module CSV> \
+    --result=<dist_dir>/stock-abi-check.json \
+    --mismatches=<dist_dir>/stock-abi-mismatches.csv
+```
+
+It exits non-zero and sets `device_loading_approved: false` on any mismatch.
+
+Two inputs are device-specific and are not in this repository:
+
+- **official symvers** — the `vmlinux.symvers` from the matching official GKI
+  build (`android15-6.6`, build `15511674`), not one produced locally.
+- **stock module CSV** — one row per stock module object, with the columns
+  `sha256,absolute_path,canonical_module_name,source_class`. `absolute_path`
+  must point at a real `.ko` extracted from the device (`/vendor/lib/modules`
+  and the vendor_boot / vendor_dlkm images).
+
 The first device test must not combine built-in ReSukiSU with the existing
 KernelSU/ReSukiSU LKM in `init_boot`. Prepare and verify an LKM-free `init_boot` rollback
 path before authorizing any temporary boot or partition write.
